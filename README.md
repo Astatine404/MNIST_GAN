@@ -1,1 +1,1 @@
-"# MNIST_GAN" 
+# MNIST_GAN
