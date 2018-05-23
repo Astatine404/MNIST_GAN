@@ -68,7 +68,7 @@ D_trainer = tf.train.AdamOptimizer(learning_rate).minimize(D_loss,var_list=d_var
 G_trainer = tf.train.AdamOptimizer(learning_rate).minimize(G_loss,var_list=g_vars)
 
 batch_size = 100
-epochs = 30
+epochs = 10
 init = tf.global_variables_initializer()
 samples = []
 with tf.Session() as sess:
@@ -94,3 +94,5 @@ with tf.Session() as sess:
 		gen_sample = sess.run(generator(z,reuse=True),feed_dict={z:sample_z})
 
 		samples.append(gen_sample)
+
+	print(sess.run(G_loss))
