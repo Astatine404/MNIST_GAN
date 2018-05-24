@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+import sys
 from tensorflow.examples.tutorials.mnist import input_data
 
 mnist = input_data.read_data_sets("MNIST_data/",one_hot=True)
@@ -67,8 +68,8 @@ g_vars = [var for var in tvars if 'gen' in var.name]
 D_trainer = tf.train.AdamOptimizer(learning_rate).minimize(D_loss,var_list=d_vars)
 G_trainer = tf.train.AdamOptimizer(learning_rate).minimize(G_loss,var_list=g_vars)
 
-batch_size = 100
-epochs = 10
+batch_size = int(sys.argv[1])
+epochs = int(sys.argv[2])
 init = tf.global_variables_initializer()
 samples = []
 with tf.Session() as sess:
@@ -85,14 +86,13 @@ with tf.Session() as sess:
 
 			batch_z = np.random.uniform(-1,1,size=(batch_size,100))
 
-			_ = sess.run(D_trainer,feed_dict={real_images:batch_images,z:batch_z})
-			_ = sess.run(G_trainer,feed_dict={z:batch_z})
+			_, D_loss_curr = sess.run([D_trainer, D_loss] ,feed_dict={real_images:batch_images,z:batch_z})
+			_, G_loss_curr = sess.run([G_trainer, G_loss] ,feed_dict={z:batch_z})
 
-		print("ON EPOCH {}".format(epoch))
+		print("ON EPOCH {}: D_loss={}, G_loss={}".format(epoch,D_loss_curr,G_loss_curr))
 
 		sample_z = np.random.uniform(-1,1,size=(1,100))
 		gen_sample = sess.run(generator(z,reuse=True),feed_dict={z:sample_z})
 
-		samples.append(gen_sample)
-
-	print(sess.run(G_loss))
+		samples.append(gen_sample)	
+	
